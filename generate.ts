@@ -1,9 +1,9 @@
 // @ts-nocheck
 const sudoku = require('./sudoku.js');
 
-// Generates 400 puzzles with each number of givens 31-61 inclusive (12400 total)
-for (let i = 31; i <= 61; i++) {
-    for (let j = 0; j < 400; j++) {
+// Generates 2000 puzzles with each number of givens 42-61 inclusive (40000 total)
+for (let i = 42; i <= 61; i++) {
+    for (let j = 0; j < 40; j++) {
         console.log(sudoku.generate(i));
     }
 }
