@@ -20,17 +20,6 @@ var SQUARE_PEERS_MAP = null;    // Squares -> peers map
 var MIN_GIVENS = 17;            // Minimum number of givens 
 var NR_SQUARES = 81;            // Number of squares
 
-// Define difficulties by how many squares are given to the player in a new
-// puzzle.
-var DIFFICULTY = {
-    "easy":         62,
-    "medium":       53,
-    "hard":         44,
-    "very-hard":    35,
-    "insane":       26,
-    "inhuman":      17,
-};
-
 // Blank character and board representation
 sudoku.BLANK_CHAR = '0';
 sudoku.BLANK_BOARD = "000000000000000000000000000000000000000000000000000000000000000000000000000000000";
@@ -83,12 +72,6 @@ sudoku.generate = function(difficulty, unique){
     
     TODO: Implement puzzle uniqueness
     */
-    
-    // If `difficulty` is a string or undefined, convert it to a number or
-    // default it to "easy" if undefined.
-    if(typeof difficulty === "string" || typeof difficulty === "undefined"){
-        difficulty = DIFFICULTY[difficulty] || DIFFICULTY.easy;
-    }
     
     // Force difficulty between 17 and 81 inclusive
     difficulty = sudoku._force_range(difficulty, NR_SQUARES + 1, 
