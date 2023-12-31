@@ -1,3 +1,4 @@
+// @ts-nocheck
 /*
     Sudoku.js
     ---------
@@ -151,50 +152,101 @@ sudoku.generate = function(difficulty, unique){
     return sudoku.generate(difficulty);
 };
 
+/**
+ * Given a board string returns the equivalent board array
+ * @param board - board string
+ * @returns board array
+ */
+function getBoardArray(board: string):string[][] {
+    let boardArray: string[][] = new Array();
+    for (let i:number = 0; i < 9; i++) {
+        boardArray.push([]);
+        for (let j:number = 0; j < 9; j++) {
+            boardArray[i].push(board[(i*9)+j]);
+        }
+    }
+    return boardArray;
+}
+
+/**
+     * Returns if given value is a possible candidate at given position taking into account row/column/box constraints
+     * @param row - row to check
+     * @param col - column to check
+     * @param value - value to check
+     * @param board - 2d board array to check
+     * @returns true if value is a possible candidate, false otherwise
+     */
+function isPossibleCandidate(row:number, col:number, value:string, board:string[][]):boolean {
+    // Check row
+    for (let i:number = 0; i < 9; i++) {
+        if (board[row][i] === value) {
+            return false;
+        }
+    }
+    // Check column
+    for (let i:number = 0; i < 9; i++) {
+        if (board[i][col] === value) {
+            return false;
+        }
+    }
+    // Check box
+    let boxRow:number = Math.floor(row / 3);
+    let boxCol:number = Math.floor(col / 3);
+    for (let i:number = 0; i < 3; i++) {
+        for (let j:number = 0; j < 3; j++) {
+            if (board[boxRow * 3 + i][boxCol * 3 + j] === value) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+/**
+     * Returns if given Sudoku board is unsolvable, uniquely solvable, or has multiple solutions using recursive algorithm
+     * @param row - row to start at
+     * @param col - column to start at
+     * @param board - 2d board array to solve
+     * @param solutions - number of solutions found so far
+     * @returns 0 if unsolvable, 1 if uniquely solvable, 2 if multiple solutions
+     */
+function getSolutionCount(row:number, col:number, board:string[][], solutions:number):number {
+    // If at end of board, return 1 plus number of solutions found so far
+    if (row === 9) {
+        return 1 + solutions;
+    }
+    // If at end of row, move to next row
+    if (col === 9) {
+        return getSolutionCount(row + 1, 0, board, solutions);
+    }
+    // If cell is not empty, move to next cell'
+    if (board[row][col] !== '0') {
+        return getSolutionCount(row, col + 1, board, solutions);
+    }
+    // Try each possible value for cell
+    for (let i:number = 1; i <= 9; i++) {
+        // If value is valid, place it in cell and move to next cell
+        if (isPossibleCandidate(row, col, i.toString(), board)) {
+            board[row][col] = i.toString();
+            solutions = getSolutionCount(row, col + 1, board, solutions);
+            // If more than 1 solution found, return
+            if (solutions > 1) {
+                return solutions;
+            }
+        }
+    }
+    // Reset cell to empty and return number of solutions found
+    board[row][col] = '0';
+    return solutions;
+}
+
 // Solve
 // -------------------------------------------------------------------------
 sudoku.solve = function(board, reverse){
-    /* Solve a sudoku puzzle given a sudoku `board`, i.e., an 81-character 
-    string of sudoku.DIGITS, 1-9, and spaces identified by '.', representing the
-    squares. There must be a minimum of 17 givens. If the given board has no
-    solutions, return false.
-    
-    Optionally set `reverse` to solve "backwards", i.e., rotate through the
-    possibilities in reverse. Useful for checking if there is more than one
-    solution.
-    */
-    
-    // Assure a valid board
-    var report = sudoku.validate_board(board);
-    if(report !== true){
-        throw report;
-    }
-    
-    // Check number of givens is at least MIN_GIVENS
-    var nr_givens = 0;
-    for(var i in board){
-        if(board[i] !== sudoku.BLANK_CHAR && sudoku._in(board[i], sudoku.DIGITS)){
-            ++nr_givens;
-        }
-    }
-    if(nr_givens < MIN_GIVENS){
-        throw "Too few givens. Minimum givens is " + MIN_GIVENS;
-    }
-
-    // Default reverse to false
-    reverse = reverse || false;
-
-    var candidates = sudoku._get_candidates_map(board);
-    var result = sudoku._search(candidates, reverse);
-    
-    if(result){
-        var solution = "";
-        for(var square in result){
-            solution += result[square];
-        }
-        return solution;
-    }
-    return false;
+    console.log(board);
+    let solutionCount:number = getSolutionCount(0, 0, getBoardArray(board), 0);
+    console.log(solutionCount);
+    return solutionCount === 1;
 };
 
 sudoku.get_candidates = function(board){
