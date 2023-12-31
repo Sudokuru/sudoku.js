@@ -32,9 +32,8 @@ var DIFFICULTY = {
 };
 
 // Blank character and board representation
-sudoku.BLANK_CHAR = '.';
-sudoku.BLANK_BOARD = "...................................................."+
-        ".............................";
+sudoku.BLANK_CHAR = '0';
+sudoku.BLANK_BOARD = "000000000000000000000000000000000000000000000000000000000000000000000000000000000";
 
 // Init
 // -------------------------------------------------------------------------
@@ -101,7 +100,7 @@ sudoku.generate = function(difficulty, unique){
     // Get a set of squares and all possible candidates for each square
     var blank_board = "";
     for(var i = 0; i < NR_SQUARES; ++i){
-        blank_board += '.';
+        blank_board += '0';
     }
     var candidates = sudoku._get_candidates_map(blank_board);
     
