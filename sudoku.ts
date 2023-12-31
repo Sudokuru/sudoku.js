@@ -243,9 +243,7 @@ function getSolutionCount(row:number, col:number, board:string[][], solutions:nu
 // Solve
 // -------------------------------------------------------------------------
 sudoku.solve = function(board, reverse){
-    console.log(board);
     let solutionCount:number = getSolutionCount(0, 0, getBoardArray(board), 0);
-    console.log(solutionCount);
     return solutionCount === 1;
 };
 
